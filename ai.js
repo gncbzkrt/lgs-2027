@@ -15,7 +15,7 @@
   }
   function teacherPrompt({topic,question,context,mode='teach'}){
     const modeRule={hint:'Önce yalnızca küçük bir ipucu ver; doğrudan cevabı söyleme.',teach:'Kavramı basitten başlayarak kısa, örnekli ve sınav odaklı öğret.',solve:'Önce yöntem, sonra adımlar, en sonda sonucu ver. Öğrenciyi düşünmeye yönlendir.',review:'Öğrencinin eksiğini teşhis et ve 10 dakikalık mini tekrar planı oluştur.'}[mode]||'';
-    return `Sen Türkiye'de 8. sınıf LGS öğrencisine destek olan güvenilir bir öğretmensin. Yanıt dili Türkçe olsun. ${modeRule}\nGereksiz uzunluk kullanma. Bilmediğin bilgiyi uydurma. Matematik ve Fende işlem adımlarını; sözel derslerde gerekçeyi açıkla.\nKonu: ${topic||'Genel LGS'}\n${context?`Uygulama özeti: ${context}\n`:''}Öğrencinin isteği: ${question}`;
+    return `Sen Türkiye'de 8. sınıf LGS öğrencisine destek olan güvenilir bir öğretmensin. Yanıt dili Türkçe olsun. ${modeRule}\nGereksiz uzunluk kullanma. Bilmediğin bilgiyi uydurma. Matematik ve Fende işlem adımlarını; sözel derslerde gerekçeyi açıkla. Ekranda temiz görünsün: LaTeX, dolar işaretiyle matematik, ters bölü komutları veya Markdown kod bloğu kullanma. Çarpma için ×, bölme için ÷, eşitsizliklerde ≤ ve ≥ gibi doğrudan Unicode sembolleri kullan. Başlık ve madde işaretlerini sade tut.\nKonu: ${topic||'Genel LGS'}\n${context?`Uygulama özeti: ${context}\n`:''}Öğrencinin isteği: ${question}`;
   }
   async function ask({apiKey,topic,question,context,mode,localFallback}){
     const attempts=[]; if(!apiKey)return{text:localFallback(),mode:'local',model:'Yerel Öğretmen',attempts,reason:'no-key'};

@@ -1,4 +1,4 @@
-# LGS 2027 Akıllı Çalışma — FROZEN v2.1 MEB TAM
+# LGS 2027 Akıllı Çalışma — FROZEN v2.1.1 MEB TAM
 
 Bu paket 2026–2027 eğitim öğretim yılında 8. sınıfta yürürlükte olan MEB programlarını tam kazanım/öğrenme çıktısı listeleriyle içerir.
 
@@ -33,3 +33,10 @@ Dosyaların tamamını HTTPS sunan bir statik web alanına yükleyin (ör. GitHu
 2027 LGS resmî kılavuzu 23 Ağustos 2026 itibarıyla yayımlanmış değildir. Bu nedenle uygulamadaki **8. sınıf öğretim programı kapsamı tamdır**, ancak 2027 merkezi sınav kılavuzu yayımlandığında sınavın resmî kapsamı ve olası istisnaları ayrıca kontrol edilmelidir.
 
 Ayrıntılı kaynak ve sayım için `MUFREDAT_KONTROL.txt` dosyasına bakın.
+
+
+## v2.1.1 Görüntüleme Düzeltmesi
+- Gemini yanıtlarında Markdown işaretleri artık biçimlendirilir.
+- `$...$`, `\times`, `\div`, `\le`, `\ge`, `\sqrt`, `\frac` gibi temel LaTeX çıktıları telefon ekranında okunur sembollere dönüştürülür.
+- AI promptu LaTeX yerine doğrudan Unicode matematik sembolleri kullanacak şekilde sıkılaştırıldı.
+- Service Worker önbelleği v2.1.1 olarak yenilendi.
