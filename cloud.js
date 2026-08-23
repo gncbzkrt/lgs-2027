@@ -1,7 +1,19 @@
 (function(){
-  const CFG=window.LGS_CLOUD_CONFIG||{};
+  const RAW_CFG=window.LGS_CLOUD_CONFIG||{};
+  const CFG={
+    url:String(RAW_CFG.url||'').trim().replace(/\/+$/,''),
+    publishableKey:String(RAW_CFG.publishableKey||'').trim()
+  };
   const clients={};
-  function configured(){return !!(CFG.url&&CFG.publishableKey&&window.supabase?.createClient)}
+  function diagnostics(){
+    return {
+      hasConfig:!!window.LGS_CLOUD_CONFIG,
+      urlValid:/^https:\/\/[a-z0-9-]+\.supabase\.co$/i.test(CFG.url),
+      keyPresent:CFG.publishableKey.length>20,
+      clientLoaded:!!window.supabase?.createClient
+    };
+  }
+  function configured(){const d=diagnostics();return d.urlValid&&d.keyPresent&&d.clientLoaded}
   function c(mode='student'){
     if(!configured()) throw new Error('Bulut yapılandırması tamamlanmamış.');
     if(!clients[mode]) clients[mode]=window.supabase.createClient(CFG.url,CFG.publishableKey,{
@@ -32,5 +44,5 @@
   }
   async function pullStudentSnapshot(){const s=await session('student');if(!s)return null;const {data,error}=await c('student').from('student_snapshots').select('*').eq('student_user_id',s.user.id).maybeSingle();if(error)throw error;return data;}
   async function studentSignOut(){const {error}=await c('student').auth.signOut();if(error)throw error;}
-  window.LGS_CLOUD={configured,cfg:()=>({...CFG}),session,signUpParent,signInParent,signOutParent,parentFamily,createFamily,createPairingCode,parentSnapshots,ensureStudentSession,studentLink,claimPairingCode,pushStudentSnapshot,pullStudentSnapshot,studentSignOut,msg};
+  window.LGS_CLOUD={configured,diagnostics,cfg:()=>({...CFG}),session,signUpParent,signInParent,signOutParent,parentFamily,createFamily,createPairingCode,parentSnapshots,ensureStudentSession,studentLink,claimPairingCode,pushStudentSnapshot,pullStudentSnapshot,studentSignOut,msg};
 })();
