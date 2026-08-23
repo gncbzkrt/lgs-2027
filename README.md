@@ -23,3 +23,9 @@ Bu paket, v2.2 bulut sürümünün tam kontrol edilip düzeltilmiş sürümüdü
 3. Authentication > URL Configuration içine GitHub Pages adresini girin.
 4. `cloud-config.js` içinde Project URL + publishable key bulunmalıdır.
 5. Paketin tüm dosyalarını GitHub Pages reposunun köküne yükleyin.
+
+## v2.2.4 eşleştirme düzeltmesi
+- Öğrenci eşleştirme ve ilk snapshot artık tek Supabase RPC işlemidir.
+- Eşleştirme sırasında öğrenci cihaz rolü zorunlu olarak korunur.
+- Veli ekranına yanlış yönlenme engellendi.
+- Mevcut Supabase projesinde SUPABASE_PAIR_HOTFIX_v2_2_4.sql bir kez çalıştırılmalıdır.

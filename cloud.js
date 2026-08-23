@@ -37,6 +37,14 @@
   async function ensureStudentSession(){let s=await session('student');if(s)return s;const {data,error}=await c('student').auth.signInAnonymously();if(error)throw error;return data.session;}
   async function studentLink(){const s=await session('student');if(!s)return null;const {data,error}=await c('student').from('family_members').select('family_id,created_at').eq('user_id',s.user.id).maybeSingle();if(error)throw error;return data;}
   async function claimPairingCode(code){await ensureStudentSession();const clean=String(code||'').replace(/\D/g,'').slice(0,8);if(clean.length!==8)throw new Error('Eşleştirme kodu 8 haneli olmalı.');const {data,error}=await c('student').rpc('claim_pairing_code',{p_code:clean});if(error)throw error;return Array.isArray(data)?data[0]:data;}
+  async function pairStudentAndSync(code,payload){
+    await ensureStudentSession();
+    const clean=String(code||'').replace(/\D/g,'').slice(0,8);
+    if(clean.length!==8)throw new Error('Eşleştirme kodu 8 haneli olmalı.');
+    const {data,error}=await c('student').rpc('claim_pairing_code_and_sync',{p_code:clean,p_state:payload||{}});
+    if(error)throw error;
+    return Array.isArray(data)?data[0]:data;
+  }
   async function pushStudentSnapshot(payload){
     const s=await session('student'); if(!s)return {ok:false,reason:'no-session'};
     const link=await studentLink(); if(!link)return {ok:false,reason:'not-linked'};
@@ -45,5 +53,5 @@
   }
   async function pullStudentSnapshot(){const s=await session('student');if(!s)return null;const {data,error}=await c('student').from('student_snapshots').select('*').eq('student_user_id',s.user.id).maybeSingle();if(error)throw error;return data;}
   async function studentSignOut(){const {error}=await c('student').auth.signOut();if(error)throw error;}
-  window.LGS_CLOUD={configured,diagnostics,cfg:()=>({...CFG}),session,signUpParent,signInParent,signOutParent,parentFamily,createFamily,createPairingCode,parentSnapshots,ensureStudentSession,studentLink,claimPairingCode,pushStudentSnapshot,pullStudentSnapshot,studentSignOut,msg};
+  window.LGS_CLOUD={configured,diagnostics,cfg:()=>({...CFG}),session,signUpParent,signInParent,signOutParent,parentFamily,createFamily,createPairingCode,parentSnapshots,ensureStudentSession,studentLink,claimPairingCode,pairStudentAndSync,pushStudentSnapshot,pullStudentSnapshot,studentSignOut,msg};
 })();

@@ -1,11 +1,11 @@
 const D=window.LGS_DATA, OC=window.LGS_OFFICIAL_CURRICULUM||{subjects:[],totalOutcomes:0}, LESSON=window.LGS_LESSON, QE=window.LGS_QUESTIONS, AI=window.LGS_AI;
 const KEY='lgs2027-frozen-state-v2';
 const legacy=['lgs2027-state-v1'];
-function initial(){return{version:'2.2.2-CLOUD-PARENT',tab:'home',deviceMode:'',student:'',history:[],wrong:[],review:{},todayLog:{},streak:0,lastStudyDay:'',weeklyGoal:250,aiKey:'',customTopics:[],covered:[],mockExams:[],notes:{},settings:{speechRate:1,theme:'system'},aiLast:null,createdAt:Date.now()}}
+function initial(){return{version:'2.2.4-PAIR-FIX',tab:'home',deviceMode:'',student:'',history:[],wrong:[],review:{},todayLog:{},streak:0,lastStudyDay:'',weeklyGoal:250,aiKey:'',customTopics:[],covered:[],mockExams:[],notes:{},settings:{speechRate:1,theme:'system'},aiLast:null,createdAt:Date.now()}}
 function load(){let raw=localStorage.getItem(KEY);if(!raw)for(const k of legacy){if(localStorage.getItem(k)){raw=localStorage.getItem(k);break}};try{return Object.assign(initial(),JSON.parse(raw||'{}'))}catch(_){return initial()}}
 const state=load(); delete state.parentPin; if(!state.deviceMode&&(state.student||state.history?.length||state.covered?.length))state.deviceMode='student'; const app=document.getElementById('app');
 let cloudSyncTimer=null;
-const save=()=>{delete state.parentPin;state.version='2.2.2-CLOUD-PARENT';localStorage.setItem(KEY,JSON.stringify(state));if(state.deviceMode==='student')scheduleCloudSync()};
+const save=()=>{delete state.parentPin;state.version='2.2.4-PAIR-FIX';localStorage.setItem(KEY,JSON.stringify(state));if(state.deviceMode==='student')scheduleCloudSync()};
 const esc=s=>String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));
 function formatAiText(raw){
   let t=String(raw??'').replace(/\r\n?/g,'\n').trim();
@@ -90,7 +90,7 @@ function nav(){
   const tabs=state.deviceMode==='parent'?[['parent','👨‍👩‍👧','Veli'],['settings','⚙️','Ayarlar']]:[['home','🏠','Ana Sayfa'],['learn','📚','Konular'],['quiz','📝','Test'],['progress','📈','Gelişim'],['settings','⚙️','Ayarlar']];
   return `<nav class="tabs">${tabs.map(x=>`<button data-tab="${x[0]}" class="${state.tab===x[0]?'active':''}"><span>${x[1]}</span><small>${x[2]}</small></button>`).join('')}</nav>`
 }
-function header(){const mode=state.deviceMode==='parent'?'Veli bulut paneli':'Öğrenci çalışma uygulaması';return `<header class="top"><div class="brand"><div class="logo">LGS</div><div><h1>LGS 2027 Akıllı Çalışma</h1><p>${mode} · ücretsiz temel motor</p></div></div><span class="version">v2.2.3 · MEB TAM · BULUT</span></header>`}
+function header(){const mode=state.deviceMode==='parent'?'Veli bulut paneli':'Öğrenci çalışma uygulaması';return `<header class="top"><div class="brand"><div class="logo">LGS</div><div><h1>LGS 2027 Akıllı Çalışma</h1><p>${mode} · ücretsiz temel motor</p></div></div><span class="version">v2.2.4 · MEB TAM · BULUT</span></header>`}
 function screen(){if(!state.deviceMode)return roleSetup();if(state.deviceMode==='parent')return state.tab==='settings'?settings():parentGate();return({home,learn,quiz:quizHome,progress,settings}[state.tab]||home)()}
 function parentGate(){return `<div id="parentCloudRoot"><div class="card mutedbox">☁️ Veli bulut paneli hazırlanıyor…</div></div>`}
 function settings(){
@@ -136,7 +136,21 @@ function bindParentDynamic(){
 async function refreshStudentCloudStatus(){const el=document.getElementById('studentCloudStatus');if(!el)return;if(!CLOUD?.configured?.()){el.innerHTML='<span class="status-warn">Bulut henüz yapılandırılmadı.</span>';return}try{const link=await CLOUD.studentLink();el.innerHTML=link?'<span class="status-ok">● Veli hesabına bağlı · otomatik senkronizasyon açık</span>':'<span class="status-warn">● Henüz veli hesabına bağlı değil</span>'}catch(e){el.textContent='Bulut durumu okunamadı.'}}
 function bindCloudExtras(){
   document.querySelectorAll('[data-role]').forEach(b=>b.onclick=()=>{state.deviceMode=b.dataset.role;state.tab=state.deviceMode==='parent'?'parent':'home';save();render()});
-  document.querySelector('[data-pair-student]')?.addEventListener('click',async()=>{const code=document.getElementById('pairCode').value;try{await CLOUD.claimPairingCode(code);await CLOUD.pushStudentSnapshot(cloudPayload());localStorage.setItem('lgs2027-last-cloud-sync',String(Date.now()));alert('Veli hesabıyla eşleştirme tamamlandı.');refreshStudentCloudStatus()}catch(e){alert(CLOUD.msg(e))}});
+  document.querySelector('[data-pair-student]')?.addEventListener('click',async()=>{
+    const code=document.getElementById('pairCode').value;
+    const btn=document.querySelector('[data-pair-student]');
+    try{
+      state.deviceMode='student'; state.tab='settings'; save();
+      if(btn){btn.disabled=true;btn.textContent='Eşleştiriliyor…'}
+      await CLOUD.pairStudentAndSync(code,cloudPayload());
+      localStorage.setItem('lgs2027-last-cloud-sync',String(Date.now()));
+      state.deviceMode='student'; state.tab='settings'; save(); render();
+      setTimeout(()=>{refreshStudentCloudStatus();alert('Veli hesabıyla eşleştirme tamamlandı ve ilk senkronizasyon yapıldı.')},50);
+    }catch(e){
+      state.deviceMode='student'; state.tab='settings'; save(); render();
+      setTimeout(()=>alert('Eşleştirme yapılamadı: '+CLOUD.msg(e)),20);
+    }finally{if(btn){btn.disabled=false;btn.textContent='Eşleştir'}}
+  });
   document.querySelector('[data-cloud-sync]')?.addEventListener('click',async()=>{try{const r=await CLOUD.pushStudentSnapshot(cloudPayload());if(!r.ok)throw new Error('Önce veli hesabıyla eşleştirme yap.');localStorage.setItem('lgs2027-last-cloud-sync',String(Date.now()));alert('Senkronizasyon tamamlandı.');refreshStudentCloudStatus()}catch(e){alert(CLOUD.msg(e))}});
   document.querySelector('[data-parent-signout]')?.addEventListener('click',async()=>{try{if(CLOUD?.configured?.())await CLOUD.signOutParent();state.tab='parent';save();render()}catch(e){alert(CLOUD.msg(e))}});
   document.querySelectorAll('[data-change-role]').forEach(b=>b.onclick=async()=>{if(confirm('Bu cihazın rolü değiştirilsin mi? Çalışma verileri silinmez.')){if(state.deviceMode==='parent'&&CLOUD?.configured?.())try{await CLOUD.signOutParent()}catch(_){ }state.deviceMode='';state.tab='home';save();render()}});
