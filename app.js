@@ -90,7 +90,7 @@ function nav(){
   const tabs=state.deviceMode==='parent'?[['parent','👨‍👩‍👧','Veli'],['settings','⚙️','Ayarlar']]:[['home','🏠','Ana Sayfa'],['learn','📚','Konular'],['quiz','📝','Test'],['progress','📈','Gelişim'],['settings','⚙️','Ayarlar']];
   return `<nav class="tabs">${tabs.map(x=>`<button data-tab="${x[0]}" class="${state.tab===x[0]?'active':''}"><span>${x[1]}</span><small>${x[2]}</small></button>`).join('')}</nav>`
 }
-function header(){const mode=state.deviceMode==='parent'?'Veli bulut paneli':'Öğrenci çalışma uygulaması';return `<header class="top"><div class="brand"><div class="logo">LGS</div><div><h1>LGS 2027 Akıllı Çalışma</h1><p>${mode} · ücretsiz temel motor</p></div></div><span class="version">v2.2.2 · MEB TAM · BULUT</span></header>`}
+function header(){const mode=state.deviceMode==='parent'?'Veli bulut paneli':'Öğrenci çalışma uygulaması';return `<header class="top"><div class="brand"><div class="logo">LGS</div><div><h1>LGS 2027 Akıllı Çalışma</h1><p>${mode} · ücretsiz temel motor</p></div></div><span class="version">v2.2.3 · MEB TAM · BULUT</span></header>`}
 function screen(){if(!state.deviceMode)return roleSetup();if(state.deviceMode==='parent')return state.tab==='settings'?settings():parentGate();return({home,learn,quiz:quizHome,progress,settings}[state.tab]||home)()}
 function parentGate(){return `<div id="parentCloudRoot"><div class="card mutedbox">☁️ Veli bulut paneli hazırlanıyor…</div></div>`}
 function settings(){

@@ -1,3 +1,9 @@
+# v2.2.3 RLS + E-posta Dönüş Düzeltmesi
+
+- Supabase RLS sonsuz döngü düzeltildi.
+- Veli e-posta doğrulamasında uygulama kök adresi açıkça redirect olarak gönderilir.
+- Mevcut kurulum için `SUPABASE_RLS_HOTFIX_v2_2_3.sql` dosyasını bir kez çalıştırın.
+
 # LGS 2027 Akıllı Çalışma — v2.2.2 MEB TAM + Veli Bulut
 
 Bu paket, v2.2 bulut sürümünün tam kontrol edilip düzeltilmiş sürümüdür.

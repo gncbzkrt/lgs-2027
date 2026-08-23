@@ -24,7 +24,8 @@
   function msg(e){return e?.message||String(e||'Bilinmeyen hata')}
   async function session(mode){const {data,error}=await c(mode).auth.getSession();if(error)throw error;return data.session}
   async function signUpParent(email,password){
-    const {data,error}=await c('parent').auth.signUp({email,password}); if(error)throw error;
+    const emailRedirectTo=window.location.origin+window.location.pathname;
+    const {data,error}=await c('parent').auth.signUp({email,password,options:{emailRedirectTo}}); if(error)throw error;
     return {session:data.session,user:data.user,needsConfirmation:!data.session};
   }
   async function signInParent(email,password){const {data,error}=await c('parent').auth.signInWithPassword({email,password});if(error)throw error;return data;}
