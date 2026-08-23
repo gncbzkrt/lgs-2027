@@ -23,12 +23,33 @@
     for(const model of MODEL_CHAIN){const started=Date.now();try{const text=await callModel(apiKey,model,prompt);attempts.push({model,ok:true,ms:Date.now()-started});return{text,mode:'online',model,attempts}}catch(error){const status=Number(error.status)||0;attempts.push({model,ok:false,status,message:String(error.message||error),ms:Date.now()-started});if(status===400&&String(error.message).toLowerCase().includes('api key'))break;if(status===401||status===403)break}}
     return{text:localFallback(),mode:'local',model:'Yerel Öğretmen',attempts,reason:'fallback'};
   }
-  async function generateQuiz({apiKey,topic,subject,lesson,count=10}){
-    if(!apiKey) throw new Error('AI anahtarı yok');
-    const prompt=`8. sınıf LGS için tamamen özgün ${count} adet çoktan seçmeli soru üret. Ders: ${subject}. Konu: ${topic}. Konu özeti: ${lesson}. Sorular kolay-orta-zor karışık olsun, ezber yerine yorum ve kazanım ölçsün. Yayınevi/MEB sorularını kopyalama. SADECE JSON döndür. Biçim: {"questions":[{"q":"...","o":["A","B","C","D"],"a":0,"e":"kısa çözüm","difficulty":"kolay|orta|zor"}]}. a değeri 0-3 tamsayı olmalı.`;
-    const attempts=[];
-    for(const model of MODEL_CHAIN){try{const text=await callModel(apiKey,model,prompt,{json:true});const parsed=JSON.parse(text);if(Array.isArray(parsed.questions)&&parsed.questions.length){return{questions:parsed.questions.slice(0,count),model,attempts}}}catch(e){attempts.push({model,ok:false,message:String(e.message||e)});if(e.status===401||e.status===403)break}}
-    throw new Error('AI test üretilemedi');
+  const QUIZ_FORBIDDEN=[/LGS sorusu çözerken/i,/en çok hangisine dikkat/i,/doğru bir yaklaşım/i,/soru kökünü/i,/verileri ve isteneni/i,/çözümü kontrol etmeden/i,/her soruda aynı seçeneği/i,/genel sınav takti/i];
+  function validQuizQuestion(q){
+    if(!q||typeof q.q!=='string'||q.q.trim().length<15)return false;
+    if(!Array.isArray(q.o)||q.o.length!==4||new Set(q.o.map(x=>String(x).trim())).size!==4)return false;
+    const a=Number(q.a);if(!Number.isInteger(a)||a<0||a>3)return false;
+    const hay=[q.q,...q.o,String(q.e||'')].join(' ');return !QUIZ_FORBIDDEN.some(r=>r.test(hay));
   }
-  window.LGS_AI={MODEL_CHAIN,ask,generateQuiz};
+  async function generateQuiz({apiKey,topic,subject,lesson,officialOutcomes=[],count=10}){
+    if(!apiKey) throw new Error('AI anahtarı yok');
+    const kazanims=(officialOutcomes||[]).slice(0,8).map(o=>`${o.code||''} ${o.text||o}`.trim()).join(' | ');
+    const prompt=`8. sınıf LGS için ${count} adet tamamen özgün, akademik olarak gerçek çoktan seçmeli soru üret.
+Ders: ${subject}
+Konu: ${topic}
+Konu özeti: ${lesson}
+${kazanims?`MEB kazanımları: ${kazanims}
+`:''}
+ZORUNLU KALİTE KURALLARI:
+- Her soru doğrudan ${topic} bilgisini, kavramını, yorumunu veya ilgili MEB kazanımını ölçsün.
+- Genel sınav taktiği, "soruyu dikkatli oku", "verilenleri ayır", "çözümü kontrol et" gibi konu dışı/dolgu soru KESİNLİKLE üretme.
+- Seçenekler konuya özgü ve makul çeldirici olsun.
+- Kolay, orta ve zor düzey karışık olsun; en az 4 soru yorum, deney, tablo, kısa senaryo veya çıkarım gerektirsin.
+- Doğru cevap gerekçesi kısa ama öğretici olsun.
+- Yayınevi veya MEB sorularını kopyalama.
+- SADECE JSON döndür. Biçim: {"questions":[{"q":"...","o":["A","B","C","D"],"a":0,"e":"kısa çözüm","difficulty":"kolay|orta|zor"}]}. a değeri 0-3 tamsayı olmalı.`;
+    const attempts=[];
+    for(const model of MODEL_CHAIN){try{const text=await callModel(apiKey,model,prompt,{json:true});const parsed=JSON.parse(text);const qs=(Array.isArray(parsed.questions)?parsed.questions:[]).filter(validQuizQuestion).slice(0,count);if(qs.length>=Math.min(6,count)){return{questions:qs,model,attempts,filtered:(parsed.questions?.length||0)-qs.length}}throw new Error(`Kalite filtresinden yalnız ${qs.length} soru geçti`)}catch(e){attempts.push({model,ok:false,message:String(e.message||e)});if(e.status===401||e.status===403)break}}
+    throw new Error('Kazanıma uygun AI test üretilemedi');
+  }
+  window.LGS_AI={MODEL_CHAIN,ask,generateQuiz,validQuizQuestion};
 })();

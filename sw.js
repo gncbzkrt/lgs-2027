@@ -1,4 +1,4 @@
-const CACHE='lgs-2027-v2.2.4-meb-cloud';
+const CACHE='lgs2027-v225-question-quality';
 const STATIC=['./','./index.html','./styles.css','./ai.js','./cloud.js','./lesson-engine.js','./question-engine.js','./data/curriculum.js','./data/official-curriculum.js','./manifest.webmanifest','./icons/icon-192.png','./icons/icon-512.png'];
 
 self.addEventListener('install',event=>{

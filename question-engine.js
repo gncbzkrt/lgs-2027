@@ -17,6 +17,11 @@
     ['tur','Noktalama İşaretleri','Soru cümlesinin sonuna hangi işaret gelir?',['Nokta','Virgül','Soru işareti','İki nokta'],2,'Soru cümlesi soru işaretiyle biter.'],
     ['fen','Mevsimlerin Oluşumu','Mevsimlerin oluşmasının temel nedeni hangisidir?',['Dünya-Güneş uzaklığı','Eksen eğikliği ve dolanma','Ay’ın dolanması','Güneş’in dönmesi'],1,'Eksen eğikliği ve dolanma birlikte mevsimleri oluşturur.'],
     ['fen','Kalıtım','DNA’nın belirli bir özellik için bilgi taşıyan bölümüne ne denir?',['Gen','Hücre','Organ','Doku'],0,'Gen DNA’nın işlevsel bölümüdür.'],
+    ['fen','Adaptasyon','Kutup ayılarının kalın yağ tabakasına, çöl tilkilerinin ise büyük kulaklara sahip olması aşağıdakilerden hangisine örnektir?',['Adaptasyon','Modifikasyon','Mitoz','Yapay seçilim'],0,'Canlıların yaşadıkları çevrede hayatta kalma ve üreme şansını artıran kalıtsal özellikleri adaptasyondur.'],
+    ['fen','Adaptasyon','Aynı türden iki bitki popülasyonundan kurak bölgede yaşayanların zamanla daha derin köklü bireylerden oluşması hangi açıklamayla en iyi ifade edilir?',['Çevreye uyum sağlayan kalıtsal özelliklerin nesiller boyunca seçilmesi','Her bitkinin yaşamı boyunca kökünü isteyerek uzatması','Kök uzunluğunun yalnızca sulama miktarıyla anlık değişmesi','Bütün bireylerin aynı anda aynı mutasyonu geçirmesi'],0,'Adaptasyon bireyin isteğiyle oluşmaz; kalıtsal varyasyonlardan çevreye avantaj sağlayanların nesiller boyunca seçilmesiyle popülasyonda yaygınlaşır.'],
+    ['fen','Adaptasyon','Bir böcek türünde yeşil bireyler yapraklı ortamda kuşlar tarafından daha az fark ediliyor ve daha çok yavru bırakıyor. Uzun yıllar sonra yeşil bireylerin oranının artması hangi kavramla ilişkilidir?',['Adaptasyon ve doğal seçilim','Sadece modifikasyon','Mayozun durması','Edinilmiş özelliğin doğrudan aktarılması'],0,'Çevrede avantaj sağlayan kalıtsal özelliğe sahip bireylerin daha fazla üremesi doğal seçilim yoluyla adaptif özelliğin yaygınlaşmasına katkı sağlar.'],
+    ['fen','Adaptasyon','Aşağıdakilerden hangisi adaptasyon ile modifikasyon arasındaki doğru farktır?',['Adaptasyon kalıtsal ve nesiller boyunca seçilmiş olabilir; modifikasyon çevre etkisiyle bireyde oluşur ve kalıtsal değildir.','İkisi de her zaman kalıtsaldır.','Modifikasyon yalnız hayvanlarda görülür.','Adaptasyon bireyin yaşamı sırasında ihtiyaca göre oluşur.'],0,'Adaptasyon popülasyon düzeyinde kalıtsal özelliklerle ilişkilidir; modifikasyon çevre etkisiyle fenotipte oluşan, kalıtsal olmayan değişimdir.'],
+    ['fen','Adaptasyon','Bir araştırmacı farklı gaga yapısına sahip kuşların farklı besin kaynaklarında hayatta kalma başarılarını karşılaştırıyor. Bu araştırma en doğrudan hangi soruya kanıt sağlayabilir?',['Gaga yapısının çevreye uyum ve beslenme başarısıyla ilişkisine','Kuşların bütün özelliklerinin sonradan kazanıldığına','Her çevrede aynı gaga yapısının avantajlı olduğuna','Adaptasyonların bir nesilde isteğe bağlı oluştuğuna'],0,'Farklı gaga yapılarının farklı çevresel koşullarda sağladığı avantaj, adaptasyonun çevreyle ilişkisini değerlendirmeye yarar.'],
     ['fen','Katı Basıncı','Aynı ağırlıktaki cismin zemine yaptığı basıncı artırmak için ne yapılmalıdır?',['Temas alanı artırılır','Temas alanı azaltılır','Kütle azaltılır','Sıvıya konur'],1,'Alan azalırsa P=F/A gereği basınç artar.'],
     ['fen','Sıvı Basıncı','Aynı sıvıda derinlik arttıkça sıvı basıncı nasıl değişir?',['Azalır','Artar','Değişmez','Sıfır olur'],1,'Sıvı basıncı derinlikle artar.'],
     ['fen','Asitler ve Bazlar','pH değeri 7’den küçük olan çözelti genellikle nasıldır?',['Bazik','Asidik','Nötr','Tuzlu'],1,'pH<7 asidik çözeltiyi gösterir.'],
@@ -33,18 +38,22 @@
     ['eng','Accepting and Refusing','Hangisi kibar bir davet reddidir?',["I'd love to.","Sure.","I'm sorry, but I can't.","Great idea!"],2,"I'm sorry, but I can't kibar ret ifadesidir."],
     ['eng','Responsibilities','“You must tidy your room.” cümlesi ne ifade eder?',['Tercih','Sorumluluk/zorunluluk','Geçmiş olay','Tahmin'],1,'must zorunluluk bildirir.']
   ].map((x,i)=>({id:'q'+(i+1),s:x[0],t:x[1],q:x[2],o:x[3],a:x[4],e:x[5],difficulty:i%3===0?'zor':i%3===1?'orta':'kolay'}));
-  function escapeReg(s){return String(s).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')}
-  function autoFor(topic){
-    const L=window.LGS_LESSON.make(topic); const s=window.LGS_LESSON.subjectOf(topic);
-    const correct=L.keys[0]||L.summary; const wrongFrames={mat:['Sorudaki verilenleri okumadan işlem seçmek','Bütün işlemleri aynı kuralla yapmak','Sonucu kontrol etmemek'],tur:['Metindeki kanıtı yok saymak','Yalnız kişisel görüşe göre cevap vermek','Soru kökünü okumamak'],fen:['Deney koşullarını dikkate almamak','Bütün değişkenleri aynı kabul etmek','Neden-sonuç ilişkisini kurmamak'],ink:['Kronolojiyi ve bağlamı yok saymak','Olayın sonucunu incelememek','Sadece tarih ezberlemek'],din:['Kavramı günlük yaşamdan koparmak','Benzer kavramları aynı sanmak','Tanımı bağlamdan bağımsız ezberlemek'],eng:['Bağlamı okumadan tek kelimeye bakmak','Soru-cevap uyumunu kontrol etmemek','Sıralama ve zaman ifadelerini yok saymak']}[s.id]||[];
-    return [
-      {id:'a-'+topic+'-1',s:s.id,t:topic,q:`${topic} çalışırken aşağıdakilerden hangisi doğru bir yaklaşımdır?`,o:[correct,...wrongFrames].slice(0,4),a:0,e:`Doğru yaklaşım: ${correct}`,difficulty:'orta'},
-      {id:'a-'+topic+'-2',s:s.id,t:topic,q:`${topic} konusunda LGS sorusu çözerken en çok hangisine dikkat edilmelidir?`,o:[L.trap,'Sorudaki verileri ve isteneni dikkatle ayırmak','Her soruda aynı seçeneği işaretlemek','Çözümü kontrol etmeden geçmek'],a:1,e:`Sorudaki verileri ve isteneni ayırmak, ${topic} sorularında hatayı azaltır.`,difficulty:'kolay'}
-    ];
+  const FORBIDDEN_PATTERNS=[
+    /LGS sorusu çözerken/i,/en çok hangisine dikkat/i,/doğru bir yaklaşım/i,/soru kökünü/i,
+    /verileri ve isteneni/i,/çözümü kontrol etmeden/i,/her soruda aynı seçeneği/i,/sadece tarih ezberlemek/i,
+    /metindeki kanıtı yok saymak/i,/bağlamı okumadan/i,/genel sınav/i
+  ];
+  function isQualityQuestion(q){
+    if(!q||typeof q.q!=='string'||q.q.trim().length<12)return false;
+    if(!Array.isArray(q.o)||q.o.length!==4||new Set(q.o.map(x=>String(x).trim())).size!==4)return false;
+    if(!Number.isInteger(Number(q.a))||Number(q.a)<0||Number(q.a)>3)return false;
+    const hay=[q.q,...q.o,String(q.e||'')].join(' ');
+    return !FORBIDDEN_PATTERNS.some(r=>r.test(hay));
   }
-  function allFor(topic){const curated=base.filter(q=>q.t===topic);return curated.length>=2?curated:[...curated,...autoFor(topic)].slice(0,3)}
-  function randomForSubject(id,count=10){const topics=[];const s=window.LGS_DATA.subjects.find(x=>x.id===id);s?.units.forEach(u=>topics.push(...u.topics));let pool=topics.flatMap(allFor);return shuffle(pool).slice(0,count)}
-  function mixed(count=10){let pool=window.LGS_DATA.subjects.flatMap(s=>s.units.flatMap(u=>u.topics.flatMap(allFor)));return shuffle(pool).slice(0,count)}
+  function allFor(topic){return base.filter(q=>q.t===topic).filter(isQualityQuestion)}
+  function localCount(topic){return allFor(topic).length}
+  function randomForSubject(id,count=10){const topics=[];const s=window.LGS_DATA.subjects.find(x=>x.id===id);s?.units.forEach(u=>topics.push(...u.topics));let pool=topics.flatMap(allFor);return shuffle(pool).slice(0,Math.min(count,pool.length))}
+  function mixed(count=10){let pool=base.filter(isQualityQuestion);return shuffle(pool).slice(0,Math.min(count,pool.length))}
   function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
-  window.LGS_QUESTIONS={base,allFor,randomForSubject,mixed,shuffle};
+  window.LGS_QUESTIONS={base,allFor,localCount,isQualityQuestion,randomForSubject,mixed,shuffle};
 })();

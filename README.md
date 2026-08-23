@@ -1,3 +1,13 @@
+# v2.2.5 Soru Kalite Motoru
+
+- Genel sınav taktiği / dolgu soru üretimi tamamen kaldırıldı.
+- Tüm yerel sorular kalite filtresinden geçer.
+- Konu testinde doğrulanmış yerel soru yetersizse Gemini ilgili MEB kazanımlarına göre 10 özgün soru üretir.
+- AI soruları da kalite filtresinden geçer; dolgu sorular reddedilir.
+- Gemini kullanılamazsa yalnız doğrulanmış yerel sorular gösterilir; uydurma soru üretilmez.
+- Adaptasyon için 5 doğrulanmış yerel Fen sorusu eklendi.
+- Veli bulut/eşleştirme v2.2.4 yapısı korunmuştur.
+
 # v2.2.3 RLS + E-posta Dönüş Düzeltmesi
 
 - Supabase RLS sonsuz döngü düzeltildi.
@@ -24,7 +34,7 @@ Bu paket, v2.2 bulut sürümünün tam kontrol edilip düzeltilmiş sürümüdü
 4. `cloud-config.js` içinde Project URL + publishable key bulunmalıdır.
 5. Paketin tüm dosyalarını GitHub Pages reposunun köküne yükleyin.
 
-## v2.2.4 eşleştirme düzeltmesi
+## v2.2.5 eşleştirme düzeltmesi
 - Öğrenci eşleştirme ve ilk snapshot artık tek Supabase RPC işlemidir.
 - Eşleştirme sırasında öğrenci cihaz rolü zorunlu olarak korunur.
 - Veli ekranına yanlış yönlenme engellendi.
