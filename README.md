@@ -1,42 +1,49 @@
-# LGS 2027 Akıllı Çalışma — FROZEN v2.1.1 MEB TAM
+# LGS 2027 Akıllı Çalışma — v2.2 MEB TAM + Veli Bulut
 
-Bu paket 2026–2027 eğitim öğretim yılında 8. sınıfta yürürlükte olan MEB programlarını tam kazanım/öğrenme çıktısı listeleriyle içerir.
+Bu sürüm, v2.1.1'in tüm özelliklerini korur ve öğrenci–veli cihazları arasında ücretsiz bulut senkronizasyonu ekler.
 
-## Müfredat
-- Matematik: 52 resmî kazanım
-- Türkçe: 76 resmî kazanım
-- Fen Bilimleri: 61 resmî kazanım
-- T.C. İnkılap Tarihi ve Atatürkçülük: 39 resmî kazanım
-- Din Kültürü ve Ahlak Bilgisi: 28 resmî kazanım
-- İngilizce: 70 resmî öğrenme çıktısı
-- Toplam: 326
+## Güvenlik modeli
 
-Uygulamadaki 183 çalışma konusu korunmuştur. Konu ekranları ilgili MEB kazanımlarını gösterir. Türkçe'nin dinleme/izleme, konuşma, okuma ve yazma alanlarındaki 76 kazanımı ayrıca eksiksiz MEB Müfredat penceresinde bulunur.
+- Öğrenci cihazında **Veli sekmesi ve Veli PIN'i yoktur**.
+- Veli kendi cihazında **Veli cihazı** rolünü seçer.
+- Veli hesabı e-posta + veli tarafından belirlenen parola ile Supabase Auth üzerinde açılır.
+- Veli parolası çalışma verilerine yazılmaz ve öğrenci cihazına gönderilmez.
+- Öğrenci cihazı yalnızca velinin oluşturduğu **15 dakika geçerli, tek kullanımlık 8 haneli eşleştirme kodunu** kullanır.
+- Öğrenci Supabase'te anonim, cihaz-özel bir oturumla bağlanır.
+- Buluta giden öğrenci snapshot'ında Gemini API anahtarı **yoktur**.
+- PWA'da yalnız Supabase **publishable key** kullanılır. Secret/service_role key kesinlikle kullanılmaz.
+- Veritabanı erişimi RLS (Row Level Security) ile veli ailesi / öğrenci cihazı düzeyinde sınırlandırılmıştır.
 
-## Özellikler
-- Öğrencinin istediği konuyu seçebilmesi
-- Konu anlatımı ve cihaz TTS ile sesli dinleme
-- Yerel çevrimdışı test motoru
-- Gemini katmanlı AI öğretmen ve AI test üretimi
-- Yanlış defteri ve aralıklı tekrar
-- Dershane/okulda işlenen konuyu işaretleme
-- Deneme ve gelişim takibi
-- PIN korumalı veli paneli
-- JSON yedekleme/geri yükleme
-- PWA / çevrimdışı önbellek
-- MEB kazanım kodu ve tam kazanım listesi
+## Kurulum dosyaları
 
-## Kurulum
-Dosyaların tamamını HTTPS sunan bir statik web alanına yükleyin (ör. GitHub Pages). `index.html` kök dizinde kalmalıdır. Telefonda Chrome/Safari ile adresi açıp Ana Ekrana Ekle / Uygulamayı Yükle seçeneğini kullanın.
+- `SUPABASE_KURULUM.sql`: Supabase SQL Editor'da bir kez çalıştırılır.
+- `cloud-config.js`: Supabase Project URL ve Publishable Key bu dosyaya yazılır.
+- `cloud.js`: Auth, eşleştirme ve senkronizasyon motoru.
 
-## Önemli kapsam notu
-2027 LGS resmî kılavuzu 23 Ağustos 2026 itibarıyla yayımlanmış değildir. Bu nedenle uygulamadaki **8. sınıf öğretim programı kapsamı tamdır**, ancak 2027 merkezi sınav kılavuzu yayımlandığında sınavın resmî kapsamı ve olası istisnaları ayrıca kontrol edilmelidir.
+## Kullanım akışı
 
-Ayrıntılı kaynak ve sayım için `MUFREDAT_KONTROL.txt` dosyasına bakın.
+### Veli telefonu
+1. Uygulamayı aç → **Veli cihazı**.
+2. Veli hesabı oluştur / giriş yap.
+3. Aile profili oluştur.
+4. **Kod oluştur** → 8 haneli tek kullanımlık kodu öğrenciye ver.
 
+### Öğrenci telefonu
+1. Güncellemeden sonra mevcut çalışma verileri korunur ve cihaz otomatik **Öğrenci cihazı** olarak devam eder.
+2. Ayarlar → **Veli ile bulut eşleştirme**.
+3. Velinin verdiği 8 haneli kodu gir → Eşleştir.
+4. Mevcut çalışma verisi anında buluta yüklenir; bundan sonra her değişiklik otomatik senkronize edilir.
 
-## v2.1.1 Görüntüleme Düzeltmesi
-- Gemini yanıtlarında Markdown işaretleri artık biçimlendirilir.
-- `$...$`, `\times`, `\div`, `\le`, `\ge`, `\sqrt`, `\frac` gibi temel LaTeX çıktıları telefon ekranında okunur sembollere dönüştürülür.
-- AI promptu LaTeX yerine doğrudan Unicode matematik sembolleri kullanacak şekilde sıkılaştırıldı.
-- Service Worker önbelleği v2.1.1 olarak yenilendi.
+## Ücretsiz kullanım
+
+Supabase Free plan aile içi bu kullanım için yeterli kapasite sağlar. Ücretsiz projeler uzun süre hiç kullanılmazsa duraklatılabilir; uygulama yerel/çevrimdışı çalışmaya devam eder ve proje yeniden aktif olduğunda senkronizasyon kaldığı yerden devam eder.
+
+## MEB müfredatı
+
+- Matematik: 52
+- Türkçe: 76
+- Fen Bilimleri: 61
+- T.C. İnkılap Tarihi ve Atatürkçülük: 39
+- Din Kültürü ve Ahlak Bilgisi: 28
+- İngilizce: 70
+- Toplam: 326 resmî kazanım / öğrenme çıktısı
